@@ -62,16 +62,18 @@ pipeline {
         stage('Create connection pool') {
             steps {
                 container('test') {
-                    sh '''\ 
-                    avn service connection-pool-create \ 
-                    --pool-name ${TIMESCALE_POOL} \ 
-                    --pool-size ${TIMESCALE_POOL_SIZE} \ 
-                    --pool-mode ${TIMESCALE_POOL_MODE} \ 
-                    --username=tsdbadmin \ 
-                    --dbname ${TIMESCALE_DATABASE_NAME} \ 
-                    --project ${TIMESCALE_PROJECT_NAME} ${TIMESCALE_SERVICE}
-                    '''                            
-                }
+                    script { 
+                        sh '''\
+                        avn service connection-pool-create \
+                        --pool-name ${TIMESCALE_POOL} \
+                        --pool-size ${TIMESCALE_POOL_SIZE} \
+                        --pool-mode ${TIMESCALE_POOL_MODE} \
+                        --username=tsdbadmin \
+                        --dbname ${TIMESCALE_DATABASE_NAME} \
+                        --project ${TIMESCALE_PROJECT_NAME} ${TIMESCALE_SERVICE}
+                        '''
+                    }
+                }   
             }
         }
     }
