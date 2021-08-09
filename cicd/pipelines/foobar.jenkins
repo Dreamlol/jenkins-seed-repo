@@ -17,12 +17,12 @@ podTemplate(label: label,
             }
         }
         stage('Download cli') {
-             container('test') {
-            sh 'python3 -m pip install aiven-client'                            
+            container('test') {
+                sh 'python3 -m pip install aiven-client'                            
             }
         stage('Provide and verifi credentials to TimwscaleDB') {
-             container('test') {
-            sh 'echo '{ "auth_token": '$AIVEN_AUTH_TOKEN', "user_email": "your.email@aiven.com" }' > ~/.config/aiven/aiven-credentinal.json'                            
+            container('test') {
+                sh 'echo '{ "auth_token": '$AIVEN_AUTH_TOKEN', "user_email": "your.email@aiven.com" }' > ~/.config/aiven/aiven-credentinal.json'                            
             }
         }
     }
