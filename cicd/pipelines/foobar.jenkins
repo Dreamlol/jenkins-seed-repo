@@ -5,6 +5,12 @@ def home = "/home/jenkins"
 def workspace = "${home}/workspace/build-jenkins-operator"
 def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 
+pipeline {
+    parameters {
+        string(name: 'AIVEN_AUTH_TOKEN', defaultValue: '', description: 'for test only')
+    }
+}
+
 podTemplate(label: label,
         containers: [
                 containerTemplate(name: 'test', image: 'us.gcr.io/flyr-gcr/jenkins-minion-stable:1.0', ttyEnabled: true, command: 'cat'),
@@ -20,7 +26,7 @@ podTemplate(label: label,
             container('test') {
                 sh 'python3 -m pip install aiven-client'                            
             }
-        stage('Provide and verifi credentials to TimwscaleDB') {
+        stage('Provide and verify credentials to TimescaleDB') {
             container('test') {
                 sh 'echo '{ "auth_token": '$AIVEN_AUTH_TOKEN', "user_email": "your.email@aiven.com" }' > ~/.config/aiven/aiven-credentinal.json'                            
             }
