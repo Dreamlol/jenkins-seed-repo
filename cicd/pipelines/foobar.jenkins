@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def label = "k8s-${UUID.randomUUID().toString()}"
+string Klabel = "k8s-${UUID.randomUUID().toString()}"
 def home = "/home/jenkins"
 def workspace = "${home}/workspace/build-jenkins-operator"
 def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
@@ -9,22 +9,35 @@ pipeline {
     parameters {
         string(name: 'AIVEN_AUTH_TOKEN', defaultValue: '', description: 'for test only')
     }
-    podTemplate(label: label,
-            containers: [
-                    containerTemplate(name: 'test', image: 'us.gcr.io/flyr-gcr/jenkins-minion-stable:1.0', ttyEnabled: true, command: 'cat'),
-            ],
-            ) {
-        node(label) {
-            stage('Run shell') {
+    agent {
+        kubernetes {
+            label Klabel
+            containerTemplate {
+                name 'test'
+                image 'us.gcr.io/flyr-gcr/jenkins-minion-stable:1.0'
+                command 'sleep'
+                args '60m'
+            }
+        }
+    }
+
+    stages {
+        stage('Run shell') {
+            steps {
                 container('test') {
                     sh 'echo "hello world"'
                 }
             }
-            stage('Download cli') {
+        }
+        stage('Download cli') {
+            steps {
                 container('test') {
                     sh 'python3 -m pip install aiven-client'                            
                 }
-            stage('Provide and verify credentials to TimescaleDB') {
+            }
+        }
+        stage('Provide and verify credentials to TimescaleDB') {
+            steps {
                 container('test') {
                     sh 'mkdir -p ~/.config/aiven'
                     sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentinal.json'
@@ -32,5 +45,4 @@ pipeline {
             }
         }
     }
-}
 }
