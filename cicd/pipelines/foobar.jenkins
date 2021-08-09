@@ -28,7 +28,7 @@ podTemplate(label: label,
             }
         stage('Provide and verify credentials to TimescaleDB') {
             container('test') {
-                sh 'echo '{ "auth_token": '$AIVEN_AUTH_TOKEN', "user_email": "your.email@aiven.com" }' > ~/.config/aiven/aiven-credentinal.json'                            
+                sh 'echo "{ "auth_token": '$AIVEN_AUTH_TOKEN', "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentinal.json'                            
             }
         }
     }
