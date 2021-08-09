@@ -8,6 +8,9 @@ def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 pipeline {
     parameters {
         string(name: 'AIVEN_AUTH_TOKEN', defaultValue: '', description: 'for test only')
+        string(name: 'TIMESCALE_PROJECT_NAME', defaultValue: 'ivanshity-12ff', description: 'Project name')
+        string(name: 'TIMESCALE_DATABASE_NAME', defaultValue: 'foobar', description: 'Database name')
+        string(name: 'TIMESCALE_SERVICE', defaultValue: 'tsdb-dcebbfc', description: 'Service')
     }
     agent {
         kubernetes {
@@ -29,7 +32,7 @@ pipeline {
                 }
             }
         }
-        stage('Download cli') {
+        stage('Download aiven cli') {
             steps {
                 container('test') {
                     sh 'python3 -m pip install aiven-client'                            
@@ -42,6 +45,13 @@ pipeline {
                     sh 'mkdir -p ~/.config/aiven'
                     sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
                     sh 'avn project list'
+                }
+            }
+        }
+        stage('Create database') {
+            steps {
+                container('test') {
+                    sh 'avn service database-create --dbname ${TIMESCALE_DATABASE_NAME} --project ${TIMESCALE_PROJECT_NAME} ${TIMESCALE_SERVICE}'                            
                 }
             }
         }
