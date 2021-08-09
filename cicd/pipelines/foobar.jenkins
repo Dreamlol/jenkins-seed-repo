@@ -11,6 +11,10 @@ pipeline {
         string(name: 'TIMESCALE_PROJECT_NAME', defaultValue: 'ivanshity-12ff', description: 'Project name')
         string(name: 'TIMESCALE_DATABASE_NAME', defaultValue: 'foobar', description: 'Database name')
         string(name: 'TIMESCALE_SERVICE', defaultValue: 'tsdb-dcebbfc', description: 'Service')
+        string(name: 'TIMESCALE_POOL', defaultValue: '', description: 'Pool')
+        string(name: 'TIMESCALE_POOL_SIZE', defaultValue: '10', description: 'Pool size')
+        choice(name: 'TIMESCALE_POOL_MODE', choices: ['session', 'transaction', 'statement'], description: 'Pool mode')
+
     }
     agent {
         kubernetes {
@@ -52,6 +56,21 @@ pipeline {
             steps {
                 container('test') {
                     sh 'avn service database-create --dbname ${TIMESCALE_DATABASE_NAME} --project ${TIMESCALE_PROJECT_NAME} ${TIMESCALE_SERVICE}'                            
+                }
+            }
+        }
+        stage('Create connection pool') {
+            steps {
+                container('test') {
+                    sh '''\
+                    avn service connection-pool-create \ 
+                    --pool-name ${TIMESCALE_POOL} \ 
+                    --pool-size ${TIMESCALE_POOL_SIZE} \ 
+                    --pool-mode ${TIMESCALE_POOL_MODE} \ 
+                    --username=tsdbadmin \ 
+                    --dbname ${TIMESCALE_DATABASE_NAME} \ 
+                    --project ${TIMESCALE_PROJECT_NAME} ${TIMESCALE_SERVICE}
+                    '''                            
                 }
             }
         }
