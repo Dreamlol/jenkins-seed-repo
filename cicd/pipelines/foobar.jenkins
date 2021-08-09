@@ -9,27 +9,26 @@ pipeline {
     parameters {
         string(name: 'AIVEN_AUTH_TOKEN', defaultValue: '', description: 'for test only')
     }
-}
-
-podTemplate(label: label,
-        containers: [
-                containerTemplate(name: 'test', image: 'us.gcr.io/flyr-gcr/jenkins-minion-stable:1.0', ttyEnabled: true, command: 'cat'),
-        ],
-        ) {
-    node(label) {
-        stage('Run shell') {
-            container('test') {
-                sh 'echo "hello world"'
+    podTemplate(label: label,
+            containers: [
+                    containerTemplate(name: 'test', image: 'us.gcr.io/flyr-gcr/jenkins-minion-stable:1.0', ttyEnabled: true, command: 'cat'),
+            ],
+            ) {
+        node(label) {
+            stage('Run shell') {
+                container('test') {
+                    sh 'echo "hello world"'
+                }
             }
-        }
-        stage('Download cli') {
-            container('test') {
-                sh 'python3 -m pip install aiven-client'                            
-            }
-        stage('Provide and verify credentials to TimescaleDB') {
-            container('test') {
-                sh 'mkdir -p ~/.config/aiven'
-                sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentinal.json'
+            stage('Download cli') {
+                container('test') {
+                    sh 'python3 -m pip install aiven-client'                            
+                }
+            stage('Provide and verify credentials to TimescaleDB') {
+                container('test') {
+                    sh 'mkdir -p ~/.config/aiven'
+                    sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentinal.json'
+                }
             }
         }
     }
