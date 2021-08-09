@@ -62,7 +62,7 @@ pipeline {
         stage('Create connection pool') {
             steps {
                 container('test') {
-                    sh '''\
+                    sh '''\ 
                     avn service connection-pool-create \ 
                     --pool-name ${TIMESCALE_POOL} \ 
                     --pool-size ${TIMESCALE_POOL_SIZE} \ 
