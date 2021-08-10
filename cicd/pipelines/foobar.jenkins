@@ -37,12 +37,13 @@ pipeline {
             }
         }
         stage('Provide and verify credentials to TimescaleDB') {
-            withCredentials([string(credentialsId: 'aiven', variable: 'GH_TOKEN_VAL')]) {
+            withCredentials([string(credentialsId: 'aiven', variable: 'AIVEN_AUTH_TOKEN')]) {
                 steps {
                     container('test') {
-                        sh 'mkdir -p ~/.config/aiven'
-                        sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
-                        sh 'avn project list'
+                        sh 'echo $AIVEN_AUTH_TOKEN'
+                        //sh 'mkdir -p ~/.config/aiven'
+                        //sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
+                        //sh 'avn project list'
                     }
                 }
             }
