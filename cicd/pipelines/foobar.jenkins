@@ -7,14 +7,12 @@ def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 
 pipeline {
     parameters {
-        string(name: 'AIVEN_AUTH_TOKEN', defaultValue: '', description: 'for test only')
         string(name: 'TIMESCALE_PROJECT_NAME', defaultValue: 'ivanshity-12ff', description: 'Project name')
         string(name: 'TIMESCALE_DATABASE_NAME', defaultValue: 'foobar', description: 'Database name')
         string(name: 'TIMESCALE_SERVICE', defaultValue: 'tsdb-dcebbfc', description: 'Service')
         string(name: 'TIMESCALE_POOL', defaultValue: '', description: 'Pool')
         string(name: 'TIMESCALE_POOL_SIZE', defaultValue: '10', description: 'Pool size')
         choice(name: 'TIMESCALE_POOL_MODE', choices: ['session', 'transaction', 'statement'], description: 'Pool mode')
-
     }
     agent {
         kubernetes {
