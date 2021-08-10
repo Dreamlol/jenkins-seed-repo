@@ -29,13 +29,6 @@ pipeline {
     }
 
     stages {
-        stage('Run shell') {
-            steps {
-                container('test') {
-                    sh 'echo "hello world"'
-                }
-            }
-        }
         stage('Download aiven cli') {
             steps {
                 container('test') {
@@ -44,11 +37,13 @@ pipeline {
             }
         }
         stage('Provide and verify credentials to TimescaleDB') {
-            steps {
-                container('test') {
-                    sh 'mkdir -p ~/.config/aiven'
-                    sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
-                    sh 'avn project list'
+            withCredentials([string(credentialsId: 'aiven', variable: 'GH_TOKEN_VAL')]) {
+                steps {
+                    container('test') {
+                        sh 'mkdir -p ~/.config/aiven'
+                        sh 'echo "{ "auth_token": $AIVEN_AUTH_TOKEN, "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
+                        sh 'avn project list'
+                    }
                 }
             }
         }
@@ -75,6 +70,6 @@ pipeline {
                     }
                 }   
             }
-        }
+        }`
     }
 }
