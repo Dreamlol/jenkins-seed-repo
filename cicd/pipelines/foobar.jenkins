@@ -39,7 +39,7 @@ pipeline {
                 container('test') {
                     withCredentials([string(credentialsId: 'aiven', variable: 'AIVEN_AUTH_TOKEN')]) {
                         sh 'mkdir -p ~/.config/aiven'
-                        sh 'echo "{ "auth_token": \\"${AIVEN_AUTH_TOKEN}\\", "user_email": "your.email@aiven.com" }" > ~/.config/aiven/aiven-credentials.json'
+                        sh 'echo "{ \\"auth_token\\": \\"${AIVEN_AUTH_TOKEN}\\", \\"user_email\\": \\"your.email@aiven.com\\" }" > ~/.config/aiven/aiven-credentials.json'
                         sh 'avn project list'
                     }
                 }
